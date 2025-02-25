@@ -100,9 +100,10 @@ if tab == "Graph":
             y=team_data['drive_points'],
             mode='lines+markers', 
             name=f'Actual - {team}',
-            line=dict(color=team_colors.get(team, 'gray'), width=3),
+            line=dict(color=team_colors.get(team, '#636EFA'), width=4),
+            marker=dict(size=6),
             legendgroup=team,
-            showlegend=True 
+            visible=True if team == comparison_df['team'].unique()[0] else 'legendonly'
         ))
         
         fig.add_trace(go.Scatter(
@@ -110,16 +111,30 @@ if tab == "Graph":
             y=team_data['predicted_drive_points'],
             mode='lines+markers', 
             name=f'Predicted - {team}',
-            line=dict(dash='dot', color=team_colors.get(team, 'gray'), width=3),
+            line=dict(dash='dot', color=team_colors.get(team, '#636EFA'), width=4),
+            marker=dict(size=6, symbol='circle-open'),
             legendgroup=team,
-            showlegend=True 
+            visible=True if team == comparison_df['team'].unique()[0] else 'legendonly'
         ))
     
     fig.update_layout(
         title='Average Points Scored Per Team Over the Years: Actual vs Predicted',
-        title_font=dict(size=24, family='Arial', color='black', weight='bold'),
-        xaxis_title='Season',
-        yaxis_title='Average Points Per Drive',
+        title_font=dict(size=24, family='Arial', color='white'),
+        xaxis=dict(
+            title='Season',
+            title_font=dict(size=16, color='white'),
+            tickfont=dict(size=14, color='white'),
+            showgrid=True,
+            gridcolor='rgba(255,255,255,0.2)',
+            tickangle=45
+        ),
+        yaxis=dict(
+            title='Average Points Per Drive',
+            title_font=dict(size=16, color='white'),
+            tickfont=dict(size=14, color='white'),
+            showgrid=True,
+            gridcolor='rgba(255,255,255,0.2)',
+        ),
         updatemenus=[
             {
                 'buttons': [
@@ -127,7 +142,7 @@ if tab == "Graph":
                         'label': team,
                         'method': 'update',
                         'args': [
-                            {'visible': [team == trace.legendgroup for trace in fig.data]},
+                            {'visible': [(team == trace.legendgroup) for trace in fig.data]},
                             {'title': f'Average Points for {team}'}
                         ]
                     }
@@ -135,25 +150,21 @@ if tab == "Graph":
                 ],
                 'direction': 'down',
                 'showactive': True,
+                'x': 1.3,
+                'xanchor': 'left',
+                'y': 1.15,
+                'yanchor': 'top',
+                'font': dict(color='white')
             }
         ],
-        height=800, 
-        width=1100,
-        plot_bgcolor='rgba(245, 245, 245, 1)',
-        xaxis=dict(
-            title='Season',
-            title_font=dict(size=16),
-            tickfont=dict(size=14),
-            showgrid=False
-        ),
-        yaxis=dict(
-            title='Average Points Per Drive',
-            title_font=dict(size=16),
-            tickfont=dict(size=14),
-            showgrid=False
-        ),
+        height=700, 
+        width=1000,
+        plot_bgcolor='rgba(20, 20, 20, 1)',
+        paper_bgcolor='rgba(0, 0, 0, 1)',
         legend=dict(
-            font=dict(size=14)  
+            font=dict(size=14, color='white'),
+            bgcolor='rgba(50, 50, 50, 0.8)',
         )
     )
+    
     st.plotly_chart(fig)
